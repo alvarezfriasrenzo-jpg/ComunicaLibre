@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <meta name="description" content="ComunicaLibre: aplicación de apoyo a la comunicación accesible.">
+  <title>ComunicaLibre | Mi voz, mis palabras</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+  <div class="app-layout">
+    <aside class="sidebar" aria-label="Navegación principal">
+      <a class="brand" href="#inicio" aria-label="ComunicaLibre, inicio">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>ComunicaLibre</strong><small>Mi voz, mis palabras</small></span>
+      </a>
+
+      <div class="profile-card">
+        <div class="profile-avatar" aria-hidden="true">☺</div>
+        <div class="profile-copy"><small>PERFIL ACTIVO</small><strong id="profileName">Usuario principal</strong></div>
+        <button class="icon-button profile-edit" id="editProfileButton" type="button" aria-label="Editar nombre del perfil" title="Editar perfil">✎</button>
+      </div>
+
+      <p class="nav-label">MIS PALABRAS</p>
+      <nav class="nav-list" id="categoryNav">
+        <button class="nav-item active" type="button" data-view="all"><span class="nav-icon">▦</span><span>Todas las frases</span><span class="nav-count" id="allCount">0</span></button>
+        <button class="nav-item" type="button" data-view="basicas"><span class="nav-icon">◉</span><span>Básicas</span></button>
+        <button class="nav-item" type="button" data-view="necesidades"><span class="nav-icon">♡</span><span>Necesidades</span></button>
+        <button class="nav-item" type="button" data-view="salud"><span class="nav-icon">✚</span><span>Salud</span></button>
+        <button class="nav-item" type="button" data-view="familia"><span class="nav-icon">⌂</span><span>Familia</span></button>
+        <button class="nav-item emergency-nav" type="button" data-view="emergencia"><span class="nav-icon">!</span><span>Emergencia</span><span class="nav-dot" aria-hidden="true"></span></button>
+        <button class="nav-item" type="button" data-view="personalizadas"><span class="nav-icon">✎</span><span>Mis frases</span><span class="nav-count" id="customCount">0</span></button>
+        <button class="nav-item" type="button" data-view="favoritas"><span class="nav-icon">☆</span><span>Favoritas</span><span class="nav-count" id="favoriteCount">0</span></button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+      <button class="sidebar-add" id="addPhraseSidebar" type="button"><span aria-hidden="true">＋</span> Crear una frase</button>
+      <div class="sidebar-bottom">
+        <div class="offline-status"><span class="status-dot"></span><span>Datos guardados en este dispositivo</span></div>
+        <button class="settings-nav" id="openSettingsButton" type="button"><span aria-hidden="true">⚙</span> Ajustes de accesibilidad</button>
+      </div>
+    </aside>
+
+    <main class="main-content" id="contenido">
+      <header class="topbar" id="inicio">
+        <div class="topbar-title">
+          <p class="eyebrow">TU ESPACIO DE COMUNICACIÓN</p>
+          <h1 id="viewTitle">¿Qué querés comunicar?</h1>
+          <p class="subheading" id="viewDescription">Elegí una frase para decirla en voz alta o escribí tu propio mensaje.</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="voice-status" id="voiceStatus" role="status" aria-live="polite"><span class="voice-status-dot"></span><span id="voiceStatusText">Voz lista para usar</span></div>
+          <button class="top-icon-button" id="openSettingsTop" type="button" aria-label="Abrir ajustes" title="Ajustes">⚙</button>
+        </div>
+      </header>
+
+      <section class="urgent-banner" aria-labelledby="urgentTitle">
+        <div class="urgent-symbol" aria-hidden="true">!</div>
+        <div class="urgent-copy"><strong id="urgentTitle">¿Necesitás ayuda urgente?</strong><span>Acceso rápido a una frase importante.</span></div>
+        <button class="urgent-button" id="urgentSpeakButton" type="button">▣ <span>Necesito ayuda</span></button>
+      </section>
+
+      <section class="phrase-section" aria-labelledby="phraseSectionTitle">
+        <div class="section-toolbar">
+          <div><h2 id="phraseSectionTitle">Frases disponibles</h2><p class="section-note" id="phraseCountText">Elegí una tarjeta para comunicarte.</p></div>
+          <button class="primary-button add-button" id="addPhraseButton" type="button"><span aria-hidden="true">＋</span> Nueva frase</button>
+        </div>
+        <div class="search-row">
+          <label class="search-box" for="phraseSearch"><span aria-hidden="true">⌕</span><input id="phraseSearch" type="search" placeholder="Buscar una frase..." autocomplete="off"><kbd>/</kbd></label>
+          <button class="filter-chip" id="scanToggleButton" type="button" aria-pressed="false"><span aria-hidden="true">◉</span> Modo barrido <span class="toggle-mini" aria-hidden="true"><i></i></span></button>
+        </div>
+        <div class="scanner-notice" id="scannerNotice" hidden role="status" aria-live="polite"><span class="scanner-pulse"></span><span id="scannerNoticeText">Modo barrido activo.</span><button id="scanSelectButton" type="button" class="scanner-select-button">Seleccionar opción actual ↵</button></div>
+        <div class="phrase-grid" id="phraseGrid" aria-label="Lista de frases"></div>
+        <div class="empty-state" id="emptyState" hidden><div class="empty-icon" aria-hidden="true">⌕</div><h3>No encontramos frases</h3><p>Probá con otra búsqueda o creá una frase nueva.</p><button class="primary-button" id="emptyAddButton" type="button">＋ Crear frase</button></div>
+      </section>
+
+      <section class="composer-card" aria-labelledby="composerTitle">
+        <div class="composer-heading"><div class="composer-icon" aria-hidden="true">✎</div><div><h2 id="composerTitle">Escribí tu propio mensaje</h2><p>Tu mensaje se puede leer en voz alta cuando esté listo.</p></div></div>
+        <label class="visually-hidden" for="customMessage">Mensaje para comunicar</label>
+        <textarea id="customMessage" rows="3" maxlength="500" placeholder="Por ejemplo: Me gustaría sentarme junto a la ventana..."></textarea>
+        <div class="composer-footer"><span class="character-count" id="characterCount">0 / 500 caracteres</span><div class="composer-actions"><button class="secondary-button" id="clearMessageButton" type="button">Borrar texto</button><button class="primary-button speak-button" id="speakMessageButton" type="button"><span aria-hidden="true">▶</span> Decir mensaje</button></div></div>
+      </section>
+
+      <section class="history-section" aria-labelledby="historyTitle">
+        <div class="history-header"><div><h2 id="historyTitle">Mensajes recientes</h2><p>Los últimos mensajes que se dijeron desde esta aplicación.</p></div><button class="text-button" id="clearHistoryButton" type="button">Borrar historial</button></div>
+        <div class="history-list" id="historyList"></div>
+        <p class="history-disabled" id="historyDisabled" hidden>El historial está desactivado en los ajustes de privacidad.</p>
+      </section>
+
+      <footer class="app-footer"><span>ComunicaLibre · Prototipo accesible</span><span>Los datos se guardan localmente en este dispositivo.</span></footer>
+    </main>
+  </div>
+
+  <dialog class="app-dialog" id="phraseDialog" aria-labelledby="phraseDialogTitle">
+    <form id="phraseForm" method="dialog" class="dialog-form">
+      <div class="dialog-header"><div><p class="eyebrow">PERSONALIZACIÓN</p><h2 id="phraseDialogTitle">Crear una frase</h2></div><button class="dialog-close" type="button" data-close="phraseDialog" aria-label="Cerrar ventana">×</button></div>
+      <input type="hidden" id="phraseId">
+      <label class="field-label" for="phraseText">Texto de la frase</label>
+      <input class="text-field" id="phraseText" name="phraseText" maxlength="120" required placeholder="Escribí la frase..."><span class="field-help">Usá palabras cortas y claras. Máximo 120 caracteres.</span>
+      <label class="field-label" for="phraseCategory">Categoría</label>
+      <select class="text-field" id="phraseCategory" name="phraseCategory"><option value="basicas">Básicas</option><option value="necesidades">Necesidades</option><option value="salud">Salud</option><option value="familia">Familia</option><option value="emergencia">Emergencia</option></select>
+      <label class="check-field"><input type="checkbox" id="phraseEmergency"> <span>Marcar como frase de emergencia</span></label>
+      <div class="dialog-actions"><button class="secondary-button" type="button" data-close="phraseDialog">Cancelar</button><button class="primary-button" type="submit">Guardar frase</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="app-dialog settings-dialog" id="settingsDialog" aria-labelledby="settingsTitle">
+    <form id="settingsForm" method="dialog" class="dialog-form">
+      <div class="dialog-header"><div><p class="eyebrow">PERSONALIZÁ TU EXPERIENCIA</p><h2 id="settingsTitle">Ajustes de accesibilidad</h2></div><button class="dialog-close" type="button" data-close="settingsDialog" aria-label="Cerrar ventana">×</button></div>
+      <section class="setting-block"><div class="setting-label-row"><div><label class="field-label" for="speechRate">Velocidad de la voz</label><p class="field-help">Ajustá la velocidad para que sea cómoda.</p></div><output class="rate-value" id="speechRateValue" for="speechRate">0,85×</output></div><input class="range-field" type="range" id="speechRate" min="0.5" max="1.3" step="0.05" value="0.85"><div class="range-labels"><span>Más lenta</span><span>Más rápida</span></div></section>
+      <section class="setting-block"><label class="field-label" for="voiceSelect">Voz del dispositivo</label><select class="text-field" id="voiceSelect"><option value="">Voz en español predeterminada</option></select><p class="field-help">Las voces disponibles dependen del navegador y del dispositivo.</p><button class="secondary-button test-voice" id="testVoiceButton" type="button">▶ Probar voz</button></section>
+      <section class="setting-block setting-row"><div><strong>Historial de mensajes</strong><p class="field-help">Guardar una lista de los mensajes que se pronunciaron.</p></div><label class="switch-control"><input type="checkbox" id="historyEnabled" checked><span class="switch-track"><i></i></span><span class="visually-hidden">Activar historial</span></label></section>
+      <section class="setting-block privacy-note"><span aria-hidden="true">🔒</span><p>Las frases, preferencias y el historial se guardan en este navegador. No se envían a un servidor.</p></section>
+      <div class="dialog-actions"><button class="secondary-button" type="button" data-close="settingsDialog">Cerrar</button><button class="primary-button" type="submit">Guardar ajustes</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="app-dialog small-dialog" id="profileDialog" aria-labelledby="profileDialogTitle">
+    <form id="profileForm" method="dialog" class="dialog-form"><div class="dialog-header"><div><p class="eyebrow">MI PERFIL</p><h2 id="profileDialogTitle">Nombre del perfil</h2></div><button class="dialog-close" type="button" data-close="profileDialog" aria-label="Cerrar ventana">×</button></div><label class="field-label" for="profileNameInput">¿Cómo querés llamar a este perfil?</label><input class="text-field" id="profileNameInput" maxlength="40" required><div class="dialog-actions"><button class="secondary-button" type="button" data-close="profileDialog">Cancelar</button><button class="primary-button" type="submit">Guardar</button></div></form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
